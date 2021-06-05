@@ -15,7 +15,7 @@ Fetch image from default board /wsg/:
 random 
 
 List all boards available:
-random
+random list
 
 Fetch a random image from /g/:
 random g
