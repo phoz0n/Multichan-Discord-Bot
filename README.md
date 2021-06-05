@@ -11,9 +11,14 @@ add your bot token at the end of the bot.py
 
 ## How to use it?
 ```
-random #Default board /wsg/
-random list #List all boards available
-random g #Fetch a random image from /g/
+Fetch image from default board /wsg/:
+random 
+
+List all boards available:
+random
+
+Fetch a random image from /g/:
+random g
 ```
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/33037084/120877187-54f49680-c5b5-11eb-843b-eeb6cf716c90.png)
