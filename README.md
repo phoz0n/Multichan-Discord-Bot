@@ -1,5 +1,5 @@
-# 4chan-Discord-Bot
-4chan Discord Bot running python that displays random images from any boards
+# Multichan-Discord-Bot
+Multichan Discord Bot running python that displays random images from 4chan boards and Reddit
 
 ## Requirements
 ```shell
@@ -11,13 +11,10 @@ add your bot token at the end of the bot.py
 
 ## How to use it?
 ```
-Fetch image from default board /wsg/:
-random 
+Fetch a random image from subreddit pic:
+random pic
 
-List all boards available:
-random list
-
-Fetch a random image from /g/:
+Fetch a random image from 4chan /g/:
 random g
 ```
 ## Screenshots
