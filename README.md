@@ -18,4 +18,4 @@ Fetch a random image from 4chan /g/:
 random g
 ```
 ## Screenshots
-![image](https://user-images.githubusercontent.com/33037084/120877187-54f49680-c5b5-11eb-843b-eeb6cf716c90.png)
+![image](https://user-images.githubusercontent.com/33037084/135354900-d8507f7d-9118-4880-9a8f-6659129c839d.png)
