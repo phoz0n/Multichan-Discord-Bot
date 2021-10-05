@@ -10,8 +10,11 @@ default_intents.members = True
 client = commands.Bot(command_prefix = '!')
 http = urllib3.PoolManager()
 quatrechan_boards = ['3','a','aco','adv','an','b','bant','biz','c','cgl','ck','cm','co','d','diy','e','f','fa','fit','g','gd','gif','h','hc','his','hm','hr','i','ic','int','jp','k','lgbt','lit','m','mlp','mu','n','news','o','out','p','po','pol','pw','qa','qst','r','r9k','s','s4s','sci','soc','sp','t','tg','toy','trash','trv','tv','u','v','vg','vip','vm','vmg','vp','vr','vrpg','vst','vt','w','wg','wsg','wsr','x','xs','y']
-useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'
+useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
+accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
+
+
 @client.event
 async def on_ready():
     print("Ready")
@@ -21,7 +24,7 @@ async def on_message(message):
      
     if message.author == client.user:
         return
-    
+
     #4chan random img
     if message.content.lower().startswith('random'):
         
@@ -68,10 +71,19 @@ async def on_message(message):
         else:
             response = http.request('GET', 'https://www.reddit.com/r/' + board + '/' + redditMode + '.api', headers={'User-agent':useragent} )
             data = json.loads(response.data)
+            channel = client.get_channel()
             try:
-                await message.channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'] )
+                gallery = ''
+                for x in data[0]['data']['children'][0]['data']['gallery_data']['items']:
+                    gallery = gallery + 'https://i.redd.it/' + x['media_id'] + '.jpg '
+                await channel.send(gallery)
+                return
             except:
-                await message.channel.send('Not found')
+                print('not a gallery')
+            try:
+                await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'])
+            except:
+                await channel.send('Not found')
             return
 
 client.run('')
