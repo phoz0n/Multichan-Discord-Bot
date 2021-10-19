@@ -96,12 +96,12 @@ async def on_message(message):
 
         #4chan boards
         if board in quatrechan_boards:
-            quatrechamps(board)
+            await quatrechamps(board)
             return
 
         #Reddit subreddits
         else:
-            reddit(board)
+            await reddit(board)
             return
 
 client.run(os.getenv('TOKEN'))
