@@ -3,11 +3,9 @@ Multichan Discord Bot running python that displays random images from 4chan boar
 
 ## Requirements
 ```shell
-$ pip3 install discord #Discord.py package
-$ pip3 install urllib3 #HTTP client package
+$ pip install -r requirements.txt
 ```
-add your bot token at the end of the bot.py
-`client.run('')`
+add your bot token in .env file
 
 ## How to use it?
 ```
