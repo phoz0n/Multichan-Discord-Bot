@@ -16,7 +16,7 @@ quatrechan_boards = ['3','a','aco','adv','an','b','bant','biz','c','cgl','ck','c
 useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
 accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
-badWords = ['poop', 'milf', 'testest']
+badWords = os.getenv('BADWORDS').split(",")
 channel = client.get_channel(channel_id)
 
 async def reddit(board):
@@ -85,6 +85,7 @@ async def on_message(message: discord.Message):
 
     for i in badWords:
         if i in message.content:
+            await message.delete()
             await client.get_channel(channel_id).send(message.author.display_name + ' pas de ça chez nous!')
             
             return
