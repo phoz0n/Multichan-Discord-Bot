@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import json
 import urllib3
 import random
@@ -19,30 +19,29 @@ redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'bes
 badWords = os.getenv('BADWORDS').split(",")
 channel = client.get_channel(channel_id)
 
-async def reddit(board):
+async def reddit(board, message: discord.Message):
     response = http.request('GET', 'https://www.reddit.com/r/' + board + '/random.api', headers={'User-agent':useragent} )
     data = json.loads(response.data)
-    channel = client.get_channel(channel_id)
     try:
         gallery = ''
         for x in data[0]['data']['children'][0]['data']['gallery_data']['items']:
             gallery = gallery + 'https://i.redd.it/' + x['media_id'] + '.jpg '
-        await channel.send(gallery)
+        await message.reply(gallery)
         return
     except:
         pass
     try:
         video = data[0]['data']['children'][0]['data']['secure_media']['reddit_video']['fallback_url']
-        await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + video)
+        await message.reply(data[0]['data']['children'][0]['data']['title'] + ' ' + video)
         return
     except:
         pass
     try:
-        await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'])
+        await message.reply(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'])
     except:
-        await channel.send('Not found')
+        await message.reply('Not found')
 
-async def quatrechamps(board):
+async def quatrechamps(board, message: discord.Message):
     response = http.request('GET', 'https://a.4cdn.org/' + board + '/catalog.json')
     pages = json.loads(response.data)
 
@@ -66,16 +65,11 @@ async def quatrechamps(board):
     post_pif = posts_images[random.randrange(0,len(posts_images)-1)]
 
     #Send the webm to discord channel
-    await client.get_channel(channel_id).send('https://is2.4chan.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
+    await message.reply('https://is2.4chan.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
 
 @client.event
 async def on_ready():
-    nsfw.start()
     print("Ready")
-
-@tasks.loop(minutes= 10)
-async def nsfw():
-    await reddit('lolcats')
 
 @client.event
 async def on_message(message: discord.Message):
@@ -102,12 +96,12 @@ async def on_message(message: discord.Message):
 
         #4chan boards
         if board in quatrechan_boards:
-            await quatrechamps(board)
+            await quatrechamps(board,message)
             return
 
         #Reddit subreddits
         else:
-            await reddit(board)
+            await reddit(board,message)
             return
 
 client.run(os.getenv('TOKEN'))
