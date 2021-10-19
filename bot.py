@@ -4,7 +4,9 @@ import json
 import urllib3
 import random
 import os
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
+from yandex import YandexImage
 
 load_dotenv()
 channel_id = int(os.getenv('CHANNEL'))
@@ -31,8 +33,7 @@ async def reddit(board, message: discord.Message):
     except:
         pass
     try:
-        video = data[0]['data']['children'][0]['data']['secure_media']['reddit_video']['fallback_url']
-        await message.reply(data[0]['data']['children'][0]['data']['title'] + ' ' + video)
+        await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['secure_media']['reddit_video']['fallback_url'])
         return
     except:
         pass
@@ -103,5 +104,12 @@ async def on_message(message: discord.Message):
         else:
             await reddit(board,message)
             return
+
+    if message.content.lower().startswith('image'):
+        parser = YandexImage()
+        yandexsearch = str(message.content).split(' ')
+        result = parser.search(yandexsearch[1])
+        randomIndex = random.randint(0, len(result)-1)
+        await message.reply(result[randomIndex].url)
 
 client.run(os.getenv('TOKEN'))
