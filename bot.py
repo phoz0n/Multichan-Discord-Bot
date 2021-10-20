@@ -20,6 +20,8 @@ accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/we
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
 badWords = os.getenv('BADWORDS').split(",")
 channel = client.get_channel(channel_id)
+game = discord.Game("sending memes")
+
 
 async def reddit(board, message: discord.Message):
     response = http.request('GET', 'https://www.reddit.com/r/' + board + '/random.api', headers={'User-agent':useragent} )
@@ -33,7 +35,7 @@ async def reddit(board, message: discord.Message):
     except:
         pass
     try:
-        await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['secure_media']['reddit_video']['fallback_url'])
+        await message.reply(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['secure_media']['reddit_video']['fallback_url'])
         return
     except:
         pass
@@ -71,6 +73,8 @@ async def quatrechamps(board, message: discord.Message):
 @client.event
 async def on_ready():
     print("Ready")
+    await client.get_channel(channel_id).send("wesh alors")
+    await client.change_presence(status=discord.Status.idle, activity=game)
 
 @client.event
 async def on_message(message: discord.Message):
@@ -80,15 +84,14 @@ async def on_message(message: discord.Message):
 
     for i in badWords:
         if i in message.content:
-            await message.delete()
-            await client.get_channel(channel_id).send(message.author.display_name + ' pas de ça chez nous!')
-            
+            await message.reply(message.author.display_name + ' pas de ça chez nous!')
+            await message.add_reaction('💩')
             return
+
     #4chan random img
     if message.content.lower().startswith('random'):
 
         #Split received words in array
-
         searchBoard = str(message.content).split(' ')
         if len(searchBoard) == 1:
             board = 'wsg'
@@ -105,11 +108,27 @@ async def on_message(message: discord.Message):
             await reddit(board,message)
             return
 
+    # Yandex image search
     if message.content.lower().startswith('image'):
         parser = YandexImage()
         yandexsearch = str(message.content).split(' ')
         result = parser.search(yandexsearch[1])
         randomIndex = random.randint(0, len(result)-1)
         await message.reply(result[randomIndex].url)
+
+    # Clear section
+    ctx = await client.get_context(message)
+    split = message.content.split()
+    if split[0] == "clear": #Checking if the message is the clear command, you can also use message.content.tolower().startswith("$clear"):
+        if len(split) == 2:
+            num = 0
+            try:
+                num = int(split[1]) #checking if the second param <amount> is an int
+            except ValueError:
+                await message.channel.send("<amount> in clear <amount> must be a number")
+                return
+            await ctx.channel.purge(limit = num)
+        else:
+            await message.channel.send("Please enter the command as clear <amount>")
 
 client.run(os.getenv('TOKEN'))
