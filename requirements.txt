@@ -1,3 +1,6 @@
 discord
 urllib3
 python-dotenv
+fake_headers
+requests
+bs4
