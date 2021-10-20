@@ -4,6 +4,7 @@ Discord bot with python that displays random images from 4chan, Reddit and Yande
 ## Requirements
 ```shell
 $ pip install -r requirements.txt
+$ python3 bot.py
 ```
 add your bot token in .env file
 
