@@ -87,6 +87,9 @@ async def on_message(message: discord.Message):
             await message.reply(message.author.display_name + ' pas de ça chez nous!')
             await message.add_reaction('💩')
             return
+    
+    if message.content.lower().startswith('wesh'):
+        await message.reply('wesh alors!')
 
     #4chan random img
     if message.content.lower().startswith('random'):
