@@ -20,7 +20,7 @@ accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/we
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
 badWords = os.getenv('BADWORDS').split(",")
 channel = client.get_channel(channel_id)
-game = discord.Game("sending memes")
+game = discord.Game("bitch")
 
 
 async def reddit(board, message: discord.Message):
@@ -45,8 +45,8 @@ async def reddit(board, message: discord.Message):
         await message.reply('Not found')
 
 async def quatrechamps(board, message: discord.Message):
-    response = http.request('GET', 'https://a.4cdn.org/' + board + '/catalog.json')
-    pages = json.loads(response.data)
+    r = http.request('GET', 'https://a.4cdn.org/' + board + '/catalog.json')
+    pages = json.loads(r.data)
 
     threads = []
     for i in pages:
@@ -57,8 +57,8 @@ async def quatrechamps(board, message: discord.Message):
 
     #Fetch a random thread from threads
     thread_pif = threads_images[random.randrange(0,len(threads_images)-1)]
-    response = http.request('GET', 'https://a.4cdn.org/' + board + '/thread/' + str(thread_pif['no']) + '.json')
-    thread = json.loads(response.data)
+    r = http.request('GET', 'https://a.4cdn.org/' + board + '/thread/' + str(thread_pif['no']) + '.json')
+    thread = json.loads(r.data)
     posts = thread['posts']
 
     #Exclude posts without images from the random thread
@@ -68,7 +68,10 @@ async def quatrechamps(board, message: discord.Message):
     post_pif = posts_images[random.randrange(0,len(posts_images)-1)]
 
     #Send the webm to discord channel
-    await message.reply('https://is2.4chan.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
+    msg = await message.reply('https://is2.4chan.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
+
+    if board == 'b':
+        await client.add_reaction(msg, emoji="🤔")
 
 @client.event
 async def on_ready():
@@ -115,18 +118,18 @@ async def on_message(message: discord.Message):
     if message.content.lower().startswith('image'):
         parser = YandexImage()
         yandexsearch = str(message.content).split(' ')
-        result = parser.search(yandexsearch[1])
-        randomIndex = random.randint(0, len(result)-1)
-        await message.reply(result[randomIndex].url)
+        r = parser.search(yandexsearch[1])
+        randomIndex = random.randint(0, len(r)-1)
+        await message.reply(r[randomIndex].url)
 
     # Clear section
     ctx = await client.get_context(message)
     split = message.content.split()
-    if split[0] == "clear": #Checking if the message is the clear command, you can also use message.content.tolower().startswith("$clear"):
+    if split[0] == "clear":
         if len(split) == 2:
             num = 0
             try:
-                num = int(split[1]) #checking if the second param <amount> is an int
+                num = int(split[1])
             except ValueError:
                 await message.channel.send("<amount> in clear <amount> must be a number")
                 return
