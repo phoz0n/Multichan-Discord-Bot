@@ -21,4 +21,4 @@ jobs:
             cd ~/Multichan-Discord-Bot
             git fetch 
             git reset --hard origin/main
-            tmux | python3 bot.py
+            tmux new -d 'python3 bot.py'
