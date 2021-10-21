@@ -71,7 +71,7 @@ async def quatrechamps(board, message: discord.Message):
     msg = await message.reply('https://is2.4chan.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
 
     if board == 'b':
-        await client.add_reaction(msg, emoji="🤔")
+        await msg.add_reaction(emoji="🤔")
 
 @client.event
 async def on_ready():
