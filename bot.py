@@ -20,7 +20,7 @@ accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/we
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
 badWords = os.getenv('BADWORDS').split(",")
 channel = client.get_channel(channel_id)
-game = discord.Game("bitch")
+game = discord.Game("Counter-Strike Global Offensive")
 
 
 async def reddit(board, message: discord.Message):
@@ -76,8 +76,8 @@ async def quatrechamps(board, message: discord.Message):
 @client.event
 async def on_ready():
     print("Ready")
-    await client.get_channel(channel_id).send("wesh alors")
-    await client.change_presence(status=discord.Status.idle, activity=game)
+    await client.get_channel(channel_id).send("I am ready")
+    await client.change_presence(status=discord.Status.online, activity=game)
 
 @client.event
 async def on_message(message: discord.Message):
@@ -85,11 +85,11 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
 
-    for i in badWords:
-        if i in message.content:
-            await message.reply(message.author.display_name + ' pas de ça chez nous!')
-            await message.add_reaction('💩')
-            return
+    #for i in badWords:
+    #   if i in message.content:
+    #       await message.reply(message.author.display_name + ' pas de ça chez nous!')
+    #        await message.add_reaction('💩')
+    #        return
     
     if message.content.lower().startswith('wesh'):
         await message.reply('wesh alors!')
