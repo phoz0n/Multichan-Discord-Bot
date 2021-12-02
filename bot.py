@@ -1,26 +1,24 @@
 import discord
-from discord.ext import commands
+from discord.client import Client
 import json
 import urllib3
 import random
 import os
-from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from yandex import YandexImage
 
 load_dotenv()
+intents = discord.Intents.all()
+client = Client(intents=intents)
 channel_id = int(os.getenv('CHANNEL'))
-default_intents = discord.Intents.default()
-default_intents.members = True
-client = commands.Bot('!')
+channel = client.get_channel(channel_id)
 http = urllib3.PoolManager()
 quatrechan_boards = ['3','a','aco','adv','an','b','bant','biz','c','cgl','ck','cm','co','d','diy','e','f','fa','fit','g','gd','gif','h','hc','his','hm','hr','i','ic','int','jp','k','lgbt','lit','m','mlp','mu','n','news','o','out','p','po','pol','pw','qa','qst','r','r9k','s','s4s','sci','soc','sp','t','tg','toy','trash','trv','tv','u','v','vg','vip','vm','vmg','vp','vr','vrpg','vst','vt','w','wg','wsg','wsr','x','xs','y']
 useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
 accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
 badWords = os.getenv('BADWORDS').split(",")
-channel = client.get_channel(channel_id)
-game = discord.Game("Counter-Strike Global Offensive")
+game = discord.Game("Counter-Strike: Global Offensive")
 
 
 async def reddit(board, message: discord.Message):
@@ -68,7 +66,7 @@ async def quatrechamps(board, message: discord.Message):
     post_pif = posts_images[random.randrange(0,len(posts_images)-1)]
 
     #Send the webm to discord channel
-    msg = await message.reply('https://is2.4chan.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
+    msg = await message.reply('https://i.4cdn.org/'+ board +'/' + str(post_pif['tim']) + str(post_pif['ext']))
 
     if board == 'b':
         await msg.add_reaction(emoji="🤔")
@@ -76,8 +74,6 @@ async def quatrechamps(board, message: discord.Message):
 @client.event
 async def on_ready():
     print("Ready")
-    await client.get_channel(channel_id).send("I am ready")
-    await client.change_presence(status=discord.Status.online, activity=game)
 
 @client.event
 async def on_message(message: discord.Message):
@@ -122,6 +118,12 @@ async def on_message(message: discord.Message):
         randomIndex = random.randint(0, len(r)-1)
         await message.reply(r[randomIndex].url)
 
+    if message.content == 'serverinfo':
+        embed=discord.Embed(title=f'Stats {discord.guild.name}')
+        embed.add_field(name='Users:', value=discord.guild.member_count, inline=False)
+        await message.channel(embed=embed)
+
+
     # Clear section
     ctx = await client.get_context(message)
     split = message.content.split()
@@ -136,5 +138,6 @@ async def on_message(message: discord.Message):
             await ctx.channel.purge(limit = num)
         else:
             await message.channel.send("Please enter the command as clear <amount>")
+
 
 client.run(os.getenv('TOKEN'))
