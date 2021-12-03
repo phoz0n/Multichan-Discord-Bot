@@ -81,7 +81,7 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
 
-    if message.channel != channel_id:
+    if message.channel.id != channel_id:
         return
 
     for i in badWords:
