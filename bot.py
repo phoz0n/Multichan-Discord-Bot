@@ -81,6 +81,9 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
 
+    if message.channel != channel:
+        return
+
     for i in badWords:
        if i in message.content:
             await message.reply(message.author.display_name + ' pas de ça chez nous!')
