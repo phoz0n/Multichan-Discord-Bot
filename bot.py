@@ -90,6 +90,9 @@ async def on_message(message: discord.Message):
             await message.add_reaction('💩')
             return
     
+    if message.content.lower().startswith('help'):
+        await message.reply('List of commands: random <subreddit>, image <anything>, clear <amount>')
+
     if message.content.lower().startswith('wesh'):
         await message.reply('wesh alors!')
 
