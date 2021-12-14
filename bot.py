@@ -20,7 +20,6 @@ redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'bes
 badWords = os.getenv('BADWORDS').split(",")
 game = discord.Game("Counter-Strike: Global Offensive")
 
-
 async def reddit(board, message: discord.Message):
     response = http.request('GET', 'https://www.reddit.com/r/' + board + '/random.api', headers={'User-agent':useragent} )
     data = json.loads(response.data)
@@ -125,13 +124,12 @@ async def on_message(message: discord.Message):
         await message.reply(r[randomIndex].url)
 
     if message.content == 'serverinfo':
-        embed=discord.Embed(title=f'Stats {discord.guild.name}')
-        embed.add_field(name='Users:', value=discord.guild.member_count, inline=False)
-        await message.channel(embed=embed)
+        embed=discord.Embed(title=f'Stats:\n{message.guild.name}')
+        embed.add_field(name='Users:', value=message.guild.member_count, inline=False)
+        await message.channel.send(embed=embed)
 
 
     # Clear section
-    ctx = await client.get_context(message)
     split = message.content.split()
     if split[0] == "clear":
         if len(split) == 2:
@@ -141,7 +139,7 @@ async def on_message(message: discord.Message):
             except ValueError:
                 await message.channel.send("<amount> in clear <amount> must be a number")
                 return
-            await ctx.channel.purge(limit = num)
+            await message.channel.purge(limit = num)
         else:
             await message.channel.send("Please enter the command as clear <amount>")
 
