@@ -22,4 +22,5 @@ jobs:
             git fetch 
             git reset --hard origin/main
             pip3 install -r requirements.txt
+            python -m playwright install
             tmux new -d 'python3 bot.py'
