@@ -4,3 +4,5 @@ python-dotenv
 fake_headers
 requests
 bs4
+TikTokApi
+yandex

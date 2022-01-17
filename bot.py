@@ -6,6 +6,8 @@ import random
 import os
 from dotenv import load_dotenv
 from yandex import YandexImage
+from TikTokApi import TikTokApi
+import asyncio
 
 load_dotenv()
 intents = discord.Intents.all()
@@ -19,6 +21,18 @@ accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/we
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
 badWords = os.getenv('BADWORDS').split(",")
 game = discord.Game("Counter-Strike: Global Offensive")
+
+def tiktokshit():
+    api = TikTokApi.get_instance()
+    device_id = api.generate_device_id()
+    trending = api.by_trending(custom_device_id=device_id)
+    for x in trending:
+        video_size = x['video']['duration'] * x['video']['bitrate'] / 8
+        if video_size < 7000000:
+            video_bytes = api.get_video_by_tiktok(x, custom_device_id=device_id)
+            with open("video.mp4", "wb") as out:
+                out.write(video_bytes)
+            break
 
 async def reddit(board, message: discord.Message):
     response = http.request('GET', 'https://www.reddit.com/r/' + board + '/random.api', headers={'User-agent':useragent} )
@@ -39,7 +53,7 @@ async def reddit(board, message: discord.Message):
     try:
         await message.reply(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'])
     except:
-        await message.reply('Not found')
+        await message.reply('Not found, try this instead \n Random image from subreddit pic: random pic \n Random image from 4chan /g/: random g \n Random image from yandex: image cat \n Random TikTok from trending: tiktok')
 
 async def quatrechamps(board, message: discord.Message):
     r = http.request('GET', 'https://a.4cdn.org/' + board + '/catalog.json')
@@ -90,10 +104,12 @@ async def on_message(message: discord.Message):
             return
     
     if message.content.lower().startswith('help'):
-        await message.reply('List of commands: random <subreddit>, image <anything>, clear <amount>')
+        await message.reply('Random image from subreddit pic: random pic \n Random image from 4chan /g/: random g \n Random image from yandex: image cat \n Random TikTok from trending: tiktok')
+        return
 
     if message.content.lower().startswith('wesh'):
         await message.reply('wesh alors!')
+        return
 
     #4chan random img
     if message.content.lower().startswith('random'):
@@ -108,12 +124,11 @@ async def on_message(message: discord.Message):
         #4chan boards
         if board in quatrechan_boards:
             await quatrechamps(board,message)
-            return
 
         #Reddit subreddits
         else:
             await reddit(board,message)
-            return
+        return
 
     # Yandex image search
     if message.content.lower().startswith('image'):
@@ -122,26 +137,35 @@ async def on_message(message: discord.Message):
         r = parser.search(yandexsearch[1])
         randomIndex = random.randint(0, len(r)-1)
         await message.reply(r[randomIndex].url)
+        return
 
     if message.content == 'serverinfo':
-        embed=discord.Embed(title=f'Stats:\n{message.guild.name}')
-        embed.add_field(name='Users:', value=message.guild.member_count, inline=False)
-        await message.channel.send(embed=embed)
+        embed=discord.Embed(title=f'Stats {discord.guild.name}')
+        embed.add_field(name='Users:', value=discord.guild.member_count, inline=False)
+        await message.channel(embed=embed)
+        return
 
+    # Random tiktok
+    if message.content.lower().startswith('tiktok'):
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, tiktokshit)
+        await message.reply(file=discord.File('video.mp4'))
+        return
 
     # Clear section
-    split = message.content.split()
-    if split[0] == "clear":
-        if len(split) == 2:
-            num = 0
-            try:
-                num = int(split[1])
-            except ValueError:
-                await message.channel.send("<amount> in clear <amount> must be a number")
-                return
-            await message.channel.purge(limit = num)
-        else:
-            await message.channel.send("Please enter the command as clear <amount>")
-
+    # ctx = await client.get_context(message)
+    # split = message.content.split()
+    # if split[0] == "clear":
+    #     if len(split) == 2:
+    #         num = 0
+    #         try:
+    #             num = int(split[1])
+    #         except ValueError:
+    #             await message.channel.send("<amount> in clear <amount> must be a number")
+    #             return
+    #         await ctx.channel.purge(limit = num)
+    #     else:
+    #         await message.channel.send("Please enter the command as clear <amount>")
+    #     return
 
 client.run(os.getenv('TOKEN'))
