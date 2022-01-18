@@ -19,8 +19,8 @@ random g
 Random image from yandex:
 image cat
 
-Random TikTok from trending
-tiktok
+Random TikTok from hashtag
+tiktok foryou
 ```
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/33037084/135354900-d8507f7d-9118-4880-9a8f-6659129c839d.png)

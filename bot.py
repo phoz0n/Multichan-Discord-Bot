@@ -22,11 +22,12 @@ redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'bes
 badWords = os.getenv('BADWORDS').split(",")
 game = discord.Game("Counter-Strike: Global Offensive")
 
-def tiktokshit():
+def tiktokshit(hashtag):
     api = TikTokApi.get_instance()
     device_id = api.generate_device_id()
-    trending = api.by_trending(custom_device_id=device_id)
-    for x in trending:
+    #trending = api.by_trending(custom_device_id=device_id)
+    tiktokHashtag = api.by_hashtag(hashtag, count=20)
+    for x in tiktokHashtag:
         video_size = x['video']['duration'] * x['video']['bitrate'] / 8
         if video_size < 7000000:
             video_bytes = api.get_video_by_tiktok(x, custom_device_id=device_id)
@@ -139,16 +140,18 @@ async def on_message(message: discord.Message):
         await message.reply(r[randomIndex].url)
         return
 
-    if message.content == 'serverinfo':
-        embed=discord.Embed(title=f'Stats {discord.guild.name}')
-        embed.add_field(name='Users:', value=discord.guild.member_count, inline=False)
-        await message.channel(embed=embed)
-        return
+    # if message.content == 'serverinfo':
+    #     embed=discord.Embed(title=f'Stats {discord.guild.name}')
+    #     embed.add_field(name='Users:', value=discord.guild.member_count, inline=False)
+    #     await message.channel(embed=embed)
+    #     return
 
     # Random tiktok
     if message.content.lower().startswith('tiktok'):
+        hashtagsearch = str(message.content).split(' ')
+        hashtag = hashtagsearch[1]
         loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, tiktokshit)
+        await loop.run_in_executor(None, lambda:tiktokshit(hashtag))
         await message.reply(file=discord.File('video.mp4'))
         return
 
