@@ -32,7 +32,7 @@ def tiktokshit(hashtag):
     with open("video.mp4", "wb") as out:
         out.write(video_bytes)
     clip = mp.VideoFileClip("video.mp4")
-    clip_resized = clip.resize(height=480)
+    clip_resized = clip.resize(height=360)
     clip_resized.write_videofile("tiktok.mp4")
 
 async def reddit(board, message: discord.Message):
