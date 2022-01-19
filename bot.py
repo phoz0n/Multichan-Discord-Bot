@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from yandex import YandexImage
 from TikTokApi import TikTokApi
 import asyncio
+import moviepy.editor as mp
 
 load_dotenv()
 intents = discord.Intents.all()
@@ -25,15 +26,14 @@ game = discord.Game("Counter-Strike: Global Offensive")
 def tiktokshit(hashtag):
     api = TikTokApi.get_instance()
     device_id = api.generate_device_id()
-    #trending = api.by_trending(custom_device_id=device_id)
-    tiktokHashtag = api.by_hashtag(hashtag, count=20)
-    for x in tiktokHashtag:
-        video_size = x['video']['duration'] * x['video']['bitrate'] / 8
-        if video_size < 7000000:
-            video_bytes = api.get_video_by_tiktok(x, custom_device_id=device_id)
-            with open("video.mp4", "wb") as out:
-                out.write(video_bytes)
-            break
+    tiktokHashtag = api.by_hashtag(hashtag, count=30)
+    tiktok_pif = tiktokHashtag[random.randrange(0,len(tiktokHashtag)-1)]
+    video_bytes = api.get_video_by_tiktok(tiktok_pif, custom_device_id=device_id)
+    with open("video.mp4", "wb") as out:
+        out.write(video_bytes)
+    clip = mp.VideoFileClip("video.mp4")
+    clip_resized = clip.resize(height=480)
+    clip_resized.write_videofile("tiktok.mp4")
 
 async def reddit(board, message: discord.Message):
     response = http.request('GET', 'https://www.reddit.com/r/' + board + '/random.api', headers={'User-agent':useragent} )
@@ -152,7 +152,7 @@ async def on_message(message: discord.Message):
         hashtag = hashtagsearch[1]
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, lambda:tiktokshit(hashtag))
-        await message.reply(file=discord.File('video.mp4'))
+        await message.reply(file=discord.File('tiktok.mp4'))
         return
 
     # Clear section
