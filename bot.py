@@ -6,13 +6,9 @@ import random
 import os
 from dotenv import load_dotenv
 from yandex import YandexImage
-from TikTokApi import TikTokApi
-import asyncio
-import moviepy.editor as mp
 
 useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
 http = urllib3.PoolManager()
-
 
 load_dotenv()
 intents = discord.Intents.all()
@@ -26,18 +22,6 @@ accept = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/we
 redditModeList = ['hot', 'new', 'top', 'rising', 'random', 'controversial', 'best']
 badWords = os.getenv('BADWORDS').split(",")
 game = discord.Game("Counter-Strike: Global Offensive")
-
-def tiktokshit(hashtag):
-    api = TikTokApi.get_instance()
-    device_id = api.generate_device_id()
-    tiktokHashtag = api.by_hashtag(hashtag, count=30)
-    tiktok_pif = tiktokHashtag[random.randrange(0,len(tiktokHashtag)-1)]
-    video_bytes = api.get_video_by_tiktok(tiktok_pif, custom_device_id=device_id)
-    with open("video.mp4", "wb") as out:
-        out.write(video_bytes)
-    clip = mp.VideoFileClip("video.mp4")
-    clip_resized = clip.resize(height=360)
-    clip_resized.write_videofile("tiktok.mp4")
 
 async def reddit(board, message: discord.Message):
     response = http.request('GET', 'https://www.reddit.com/r/' + board + '/random.api', headers={'User-agent':useragent} )
@@ -143,36 +127,5 @@ async def on_message(message: discord.Message):
         randomIndex = random.randint(0, len(r)-1)
         await message.reply(r[randomIndex].url)
         return
-
-    # if message.content == 'serverinfo':
-    #     embed=discord.Embed(title=f'Stats {discord.guild.name}')
-    #     embed.add_field(name='Users:', value=discord.guild.member_count, inline=False)
-    #     await message.channel(embed=embed)
-    #     return
-
-    # Random tiktok
-    if message.content.lower().startswith('tiktok'):
-        hashtagsearch = str(message.content).split(' ')
-        hashtag = hashtagsearch[1]
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, lambda:tiktokshit(hashtag))
-        await message.reply(file=discord.File('tiktok.mp4'))
-        return
-
-    # Clear section
-    # ctx = await client.get_context(message)
-    # split = message.content.split()
-    # if split[0] == "clear":
-    #     if len(split) == 2:
-    #         num = 0
-    #         try:
-    #             num = int(split[1])
-    #         except ValueError:
-    #             await message.channel.send("<amount> in clear <amount> must be a number")
-    #             return
-    #         await ctx.channel.purge(limit = num)
-    #     else:
-    #         await message.channel.send("Please enter the command as clear <amount>")
-    #     return
 
 client.run(os.getenv('TOKEN'))
