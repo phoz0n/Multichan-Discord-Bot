@@ -9,6 +9,11 @@ from yandex import YandexImage
 from TikTokApi import TikTokApi
 import asyncio
 import moviepy.editor as mp
+from flask import Flask, render_template
+
+useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
+http = urllib3.PoolManager()
+
 
 load_dotenv()
 intents = discord.Intents.all()
