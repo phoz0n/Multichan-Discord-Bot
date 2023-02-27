@@ -1,4 +1,5 @@
 import discord
+from discord.ext import tasks
 from discord.client import Client
 import json
 import urllib3
@@ -6,6 +7,7 @@ import random
 import os
 from dotenv import load_dotenv
 from yandex import YandexImage
+import re
 
 useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
 http = urllib3.PoolManager()
@@ -14,6 +16,7 @@ load_dotenv()
 intents = discord.Intents.all()
 client = Client(intents=intents)
 channel_id = int(os.getenv('CHANNEL'))
+subredditdaily = (os.getenv('SUBREDDIT'))
 channel = client.get_channel(channel_id)
 http = urllib3.PoolManager()
 quatrechan_boards = ['3','a','aco','adv','an','b','bant','biz','c','cgl','ck','cm','co','d','diy','e','f','fa','fit','g','gd','gif','h','hc','his','hm','hr','i','ic','int','jp','k','lgbt','lit','m','mlp','mu','n','news','o','out','p','po','pol','pw','qa','qst','r','r9k','s','s4s','sci','soc','sp','t','tg','toy','trash','trv','tv','u','v','vg','vip','vm','vmg','vp','vr','vrpg','vst','vt','w','wg','wsg','wsr','x','xs','y']
@@ -42,7 +45,7 @@ async def reddit(board, message: discord.Message):
     try:
         await message.reply(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'])
     except:
-        await message.reply('Not found, try this instead \n Random image from subreddit pic: random pic \n Random image from 4chan /g/: random g \n Random image from yandex: image cat \n Random TikTok from trending: tiktok')
+        await message.reply('Not found, try this instead \n Random image from subreddit pic: random pic \n Random image from 4chan /g/: random g \n Random image from yandex: image cat')
 
 async def quatrechamps(board, message: discord.Message):
     r = http.request('GET', 'https://a.4cdn.org/' + board + '/catalog.json')
@@ -127,5 +130,31 @@ async def on_message(message: discord.Message):
         randomIndex = random.randint(0, len(r)-1)
         await message.reply(r[randomIndex].url)
         return
+    
+@tasks.loop(seconds=360)
+async def spamTask():
+    await client.wait_until_ready()
+    response = http.request('GET', 'https://www.reddit.com/r/'+ subredditdaily +'/random.api', headers={'User-agent':useragent} )
+    data = json.loads(response.data)
+    channel = client.get_channel(channel_id)
+    try:
+        gallery = ''
+        for x in data[0]['data']['children'][0]['data']['gallery_data']['items']:
+            gallery = gallery + 'https://i.redd.it/' + x['media_id'] + '.jpg '
+        await channel.send(gallery)
+        return
+    except:
+        pass
+    try:
+        await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['secure_media']['reddit_video']['fallback_url'])
+        return
+    except:
+        pass
+    try:
+        await channel.send(data[0]['data']['children'][0]['data']['title'] + ' ' + data[0]['data']['children'][0]['data']['url'])
+    except:
+        await channel.send('Not found 🤖')
+
+spamTask.start()
 
 client.run(os.getenv('TOKEN'))
