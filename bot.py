@@ -22,7 +22,7 @@ class MyClient(discord.Client):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
 
-    @tasks.loop(seconds=360)
+    @tasks.loop(hours=3)
     async def my_background_task(self):
         await self.wait_until_ready()
         response = http.request('GET', 'https://www.reddit.com/r/RealGirls/random.api', headers={'User-agent':useragent} )
