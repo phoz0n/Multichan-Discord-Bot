@@ -25,7 +25,7 @@ class MyClient(discord.Client):
     @tasks.loop(hours=3)
     async def my_background_task(self):
         await self.wait_until_ready()
-        response = http.request('GET', 'https://www.reddit.com/r/RealGirls/random.api', headers={'User-agent':useragent} )
+        response = http.request('GET', 'https://www.reddit.com/r/IRLgirls/random.api', headers={'User-agent':useragent} )
         data = json.loads(response.data)
         channel = self.get_channel(channel_id)
         try:
