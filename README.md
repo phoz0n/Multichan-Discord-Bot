@@ -8,7 +8,7 @@ $ pip install -r requirements.txt
 $ python3 bot.py
 ```
 
-## How to use it?
+## How to use it??
 ```
 Random image from subreddit pic:
 random pic
