@@ -1,4 +1,6 @@
 # Multichan-Discord-Bot
+APIs HAVE CHANGED, THE BOT DOES NOT WORK ANYMORE. FEEL FREE TO MAKE A FORK.
+
 Discord bot with python that displays random images from 4chan, Reddit, Yandex and TikTok
 
 ## Requirements
